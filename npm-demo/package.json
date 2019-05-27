@@ -11,5 +11,8 @@
     "url": "practiceNodeCourse"
   },
   "author": "Siobhan Niess",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "underscore": "^1.9.1"
+  }
 }
