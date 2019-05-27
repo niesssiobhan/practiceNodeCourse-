@@ -17,8 +17,8 @@
     // this.emit('messageLogged', {id: 1, url: 'http://'}); // the second parameter, the object within, is called the event argument
     // this. references the Logger class 
 
-  }
-}
+  // }
+// }
 
 
 // when you have module.exports this is adding to the exports object so that it can be publicly shown
