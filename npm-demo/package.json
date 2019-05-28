@@ -13,6 +13,7 @@
   "author": "Siobhan Niess",
   "license": "MIT",
   "dependencies": {
+    "mongoose": "^5.5.11",
     "underscore": "^1.9.1"
   }
 }
