@@ -9,8 +9,8 @@ app.use(express.json()); // this is adding in a piece of middleware
 
 const courses = [
   {id: 1, name: 'course1'}, // you can more than 2 properties 
-  {id: 1, name: 'course2'},
-  {id: 1, name: 'course3'} 
+  {id: 2, name: 'course2'},
+  {id: 3, name: 'course3'} 
 ];
 
 // the '/' represents the root oof the website
@@ -25,17 +25,14 @@ app.get('/api/courses', (req, res) => {
 // this is how you would go about trying to access a specific course 
 app.get('/api/courses/:id', (req, res) => {
   const course = courses.find(c => c.id === parseInt(req.params.id)); // this is a booloean answer to if the response is the correct couse that we are looking for. The return will be parsed into an integer
-  if(!course) res.status(404).send('The course was not found');
+  if(!course) return res.status(404).send('The course was not found');
   res.send(course);
 });
 
 app.post('/api/courses', (req, res) => {
 
   const {error} = validateCourse(req.body); 
-  if(error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
+  if(error) return res.status(400).send(result.error.details[0].message);
 
   // const schema = {
   //   name: Joi.string().min(3).required()
@@ -74,16 +71,13 @@ app.put('/api/courses/:id', (req, res) => {
   // look up the course
   // if not exsiting then need to return 404
   const course = courses.find(c => c.id === parseInt(req.params.id));
-  if(!course) res.status(404).send('The cousre with that ID was not found');
+  if(!course) return res.status(404).send('The cousre with that ID was not found');
 
   const {error} = validateCourse(req.body); //this is like getting result.error
   // validate
   // if invalid return 400 - bad request
   
-  if(error) {
-    res.status(400).send(error.details[0].message);
-    return;
-  }
+  if(error) return res.status(400).send(error.details[0].message);
 
   // update course 
   course.name = req.body.name;
@@ -98,6 +92,20 @@ function validateCourse(course) {
   };
   return Joi.validate(course, schema);
 }
+
+app.delete('/api/courses/:id', (req, res) => {
+  // look up the course
+  // not existing, return 404
+  const course = courses.find(c => c.id === parseInt(req.params.id));
+  if(!course) return res.status(404).send('The cousre with that ID was not found');
+
+  // delete
+  const index = courses.indexOf(course);
+  //using the splice method to remove the course from the courses array
+  courses.splice(index, 1);
+  // return the same course 
+  res.send(course);
+});
 
 const port = process.env.PORT || 3000; // this means that if there isnt already a port that is being used then we are going to use port 3000
 app.listen(port, () => console.log(`Listening on port ${port}`));
