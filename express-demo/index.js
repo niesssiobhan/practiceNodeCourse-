@@ -2,10 +2,16 @@
 
 // the list below are all of the dependencies that are being used throughout the application 
 const Joi = require('joi');
+const logger = require('./logger.js');
+const authentication = require('./auth.js');
 const express = require('express');
 const app = express(); // this represents your application
 
 app.use(express.json()); // this is adding in a piece of middleware
+
+app.use(logger);
+
+app.use(authentication);
 
 const courses = [
   {id: 1, name: 'course1'}, // you can more than 2 properties 
