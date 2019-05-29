@@ -1,6 +1,10 @@
 'use strict';
 
-// the list below are all of the dependencies that are being used throughout the application 
+// the list below are all of the dependencies that are being used throughout the application
+const startupDebugger = require('debug')('app:startup');
+const config = require('config'); 
+const morgan = require('morgan');
+const helmet = require('helmet');
 const Joi = require('joi');
 const logger = require('./logger.js');
 const authentication = require('./auth.js');
@@ -8,9 +12,22 @@ const express = require('express');
 const app = express(); // this represents your application
 
 app.use(express.json()); // this is adding in a piece of middleware
+app.use(express.urlencoded( {extended: true} )); // this way you are able to pass arrays and complex objects using the urlencoded format
+app.use(express.static('public'));
+app.use(helmet());
+
+// configuration
+// the result will very from the development.json or the production.json file depending on if you run: export NODE_ENV development or export NODE_ENV production in the terminal
+console.log(`Application Name: ${config.get('name')}`); 
+console.log(`Mail Server Name: ${config.get('mail.host')}`);  
+console.log(`Mail Password: ${config.get('mail.password')}`);
+
+if(app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+  console.log('Morgan is enabled');
+};
 
 app.use(logger);
-
 app.use(authentication);
 
 const courses = [
