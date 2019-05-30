@@ -1,17 +1,27 @@
 'use strict';
 
+const express = require('express');
+const router = express.Router();
+const Joi = require('joi');
+
+const courses = [
+  {id: 1, name: 'course1'}, // you can more than 2 properties 
+  {id: 2, name: 'course2'},
+  {id: 3, name: 'course3'} 
+];
+
 // this is how you would go about trying to access a specific course 
-app.get('/api/courses/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const course = courses.find(c => c.id === parseInt(req.params.id)); // this is a booloean answer to if the response is the correct couse that we are looking for. The return will be parsed into an integer
   if(!course) return res.status(404).send('The course was not found');
   res.send(course);
 });
 
-app.get('/api/courses', (req, res) => {
+router.get('/', (req, res) => {
   res.send(courses); // this is going to return the courses array from above
 });
 
-app.put('/api/courses/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   // look up the course
   // if not exsiting then need to return 404
   const course = courses.find(c => c.id === parseInt(req.params.id));
@@ -30,7 +40,7 @@ app.put('/api/courses/:id', (req, res) => {
   res.send(course);
 });
 
-app.post('/api/courses', (req, res) => {
+router.post('/', (req, res) => {
 
   const {error} = validateCourse(req.body); 
   if(error) return res.status(400).send(result.error.details[0].message);
@@ -69,7 +79,7 @@ function validateCourse(course) {
   return Joi.validate(course, schema);
 }
 
-app.delete('/api/courses/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   // look up the course
   // not existing, return 404
   const course = courses.find(c => c.id === parseInt(req.params.id));
@@ -82,3 +92,5 @@ app.delete('/api/courses/:id', (req, res) => {
   // return the same course 
   res.send(course);
 });
+
+module.exports = router;
