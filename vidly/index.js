@@ -1,10 +1,14 @@
 'use strict';
 
+const debug = require('debug')('app:startup');
+
 const express = require('express');
 const app = express();
 const config = require('config'); 
 const morgan = require('morgan');
 const helmet = require('helmet');
+const logger = require('./middleware/logger.js');
+const authentication = require('./middleware/auth.js');
 const genres = require('./routes/genres.js');
 const home = require('./routes/home.js');
 
@@ -15,6 +19,9 @@ app.use(express.urlencoded( {extended: true} ));
 app.use(helmet());
 app.use('/api/genres', genres); // this will tell the server to access the courses.js file for anything that has the /api/courses route 
 app.use('/', home);
+
+app.use(logger);
+app.use(authentication);
 
 if(app.get('env') === 'development') {
   app.use(morgan('tiny'));
