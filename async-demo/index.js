@@ -2,15 +2,15 @@
 // as you add in more functions within then it turns into CALLBACK HELL
 // When you run node index.js in the terminal the result will be ""Before" then "After" and then the last message will be "reading a uses from a database"
 
-console.log('before');
+// console.log('before');
 // this nested structure is due to the fact that callbacks were being used 
-getUser(1, (user) => {
-  getRepositories(user.gitHubUsername, (repos) => {
-    getCommits(repos[0], (commits) => {
-      console.log(commits);
-    })
-  })
-});
+// getUser(1, (user) => {
+//   getRepositories(user.gitHubUsername, (repos) => {
+//     getCommits(repos[0], (commits) => {
+//       console.log(commits);
+//     })
+//   })
+// });
 
 // this code belowis the same as the code from above but promises are now being used so it results in clean looking code 
 getUser(1)
@@ -19,7 +19,23 @@ getUser(1)
   .then(commits => console.log('commits', commits))
   .catch(err => console.log('Error', err.message));
 
-console.log('after');
+// Async and Await ( this is going to be the async and await approach to the code shown above)
+// note: async and await are built on top of promises
+// your code has to be wrapped in a 'try/catch' block so that as you run your codeand an error occurs it is easy to see what part of your code was rejected 
+async function displayCommits() {
+  try {
+    const user = await getUser(1);
+    const repos = await getRepositories(user.gitHubUsername);
+    const commits = await getCommits(repos[0]);
+    console.log(commits);
+  }
+  catch (err) {
+    console.log('Error', err.message);
+  }
+}
+displayCommits();
+
+// console.log('after');
 
 // Synchronous (the same code from above but done in synchronous code)
 // console.log('Before');
