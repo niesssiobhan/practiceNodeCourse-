@@ -1,7 +1,7 @@
 'use strict';
 
 function auth (req, res, next) {
-  console.log('Authenicating');
+  // console.log('Authenicating');
   next();
 }
 
