@@ -1,103 +1,51 @@
 'use strict';
 
-// the list below are all of the dependencies that are being used throughout the application 
-const Joi = require('joi');
+// all that you will end up wanting to have in this file is the start up code for the application 
+
+// the list below are all of the dependencies that are being used throughout the application
+const debug = require('debug')('app:startup');
+// const dbDebugger = require('debug')('app:db');
+const config = require('config'); 
+const morgan = require('morgan');
+const helmet = require('helmet');
+// const Joi = require('joi'); // this is now in the courses.js file
+const logger = require('./middleware/logger.js');
+const authentication = require('./auth.js');
+const courses = require('./routes/courses.js');
+const home = require('./routes/home.js');
 const express = require('express');
 const app = express(); // this represents your application
 
+app.set('view engine', 'pug'); // this is a templating engine, Express will internally load the pug module so it doesnt have to be required
+
 app.use(express.json()); // this is adding in a piece of middleware
+app.use(express.urlencoded( {extended: true} )); // this way you are able to pass arrays and complex objects using the urlencoded format
+app.use(express.static('public'));
+app.use(helmet());
+app.use('/api/courses', courses); // this will tell the server to access the courses.js file for anything that has the /api/courses route 
+app.use('/', home);
 
-const courses = [
-  {id: 1, name: 'course1'}, // you can more than 2 properties 
-  {id: 1, name: 'course2'},
-  {id: 1, name: 'course3'} 
-];
+// configuration
+// the result will very from the development.json or the production.json file depending on if you run: export NODE_ENV development or export NODE_ENV production in the terminal
+// console.log(`Application Name: ${config.get('name')}`); 
+// console.log(`Mail Server Name: ${config.get('mail.host')}`);  
+// console.log(`Mail Password: ${config.get('mail.password')}`);
 
-// the '/' represents the root oof the website
-app.get('/', (req, res) => {
-  res.send('Hello Teagan');
-});
+if(app.get('env') === 'development') {
+  app.use(morgan('tiny'));
+  debug('Morgan is enabled'); // using debug is like using console.log() but it is shorter and more self explainitory for what it is that you are looking for 
+};
 
-app.get('/api/courses', (req, res) => {
-  res.send(courses); // this is going to return the courses array from above
-});
+// dbDebugger('Connected to the database');  
 
-// this is how you would go about trying to access a specific course 
-app.get('/api/courses/:id', (req, res) => {
-  const course = courses.find(c => c.id === parseInt(req.params.id)); // this is a booloean answer to if the response is the correct couse that we are looking for. The return will be parsed into an integer
-  if(!course) res.status(404).send('The course was not found');
-  res.send(course);
-});
-
-app.post('/api/courses', (req, res) => {
-
-  const {error} = validateCourse(req.body); 
-  if(error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
-
-  // const schema = {
-  //   name: Joi.string().min(3).required()
-  // };
-
-  // const result = Joi.validate(req.body, schema); // this is going to return an object
-  // console.log(result);
-  
-  // here we have some validation logic (400 means that it was a bad request)
-  // if(!req.body.name || req.body.name.length < 3) {
-  //   res.status(400).send('Name is required');
-  //   return;
-  // };
-
-  // if(result.error) {
-  //   res.status(400).send(result.error.details[0].message); // this is going to send the client a more readable and smaller error message. accessing only the first element in the details object sending out only that message property
-  //   return;
-  // }
-
-  const course = {
-    id: courses.length + 1,
-    name: req.body.name
-  };
-
-  courses.push(course); // this is pushing it into the courses array
-  res.send(course); // this is returning the object in the body of the response 
-});
+app.use(logger);
+app.use(authentication);
 
 // here we are using a query so that we can provide addtional data from the server. and as you can see you are able to use multiple params in the url route 
 // here the year and month are both properties 
 // app.get('/api/posts/:year/:month', (req, res) => {
 //   res.send(req.query);
 // });
-
-app.put('/api/courses/:id', (req, res) => {
-  // look up the course
-  // if not exsiting then need to return 404
-  const course = courses.find(c => c.id === parseInt(req.params.id));
-  if(!course) res.status(404).send('The cousre with that ID was not found');
-
-  const {error} = validateCourse(req.body); //this is like getting result.error
-  // validate
-  // if invalid return 400 - bad request
-  
-  if(error) {
-    res.status(400).send(error.details[0].message);
-    return;
-  }
-
-  // update course 
-  course.name = req.body.name;
-
-  //return the updated course 
-  res.send(course);
-});
-
-function validateCourse(course) {
-  const schema = {
-    name: Joi.string().min(3).required()
-  };
-  return Joi.validate(course, schema);
-}
 
 const port = process.env.PORT || 3000; // this means that if there isnt already a port that is being used then we are going to use port 3000
 app.listen(port, () => console.log(`Listening on port ${port}`));
