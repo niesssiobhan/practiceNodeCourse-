@@ -71,4 +71,61 @@ async function getCourses() {
   console.log(courses);
 }
 
+async function updateCourse(id) {
+  // approach: query first
+  // findById()
+  const course = await Course.findById(id);
+  if (!course) return;
+  // modify its properties
+  // course.isPublished = true;
+  // course.author = 'another author';
+  course.set({ // the two lines above is another way to do what is done in the course.set, but course.set is cleaner code
+    isPublished: true,
+    author: 'another author'
+  })
+  // save() this calls in a promise so that is why we have the code below with an await 
+  const result = await course.save();
+  console.log(result);
+}
+
+//----------------------------------------------------//
+
+async function updateCourse(id) {
+  // approach: update first (query first)
+  if (course.isPublished) return;
+  // this would be updating  in the database without retrieving it first
+  // having: const course = await Course.update({isPublished: false}) would give you the ability to update multiple documents at the same time 
+  const result = await Course.update({_id : id}, { // this will update a course with a particular id
+    $set: { // this is an operator that is being used from mongodb
+      author: 'Teagan',
+      isPublished: false
+    }
+  });
+  console.log(result);
+}
+
+//-------------------------------------------------------//
+//optionally: get the updated document
+async function updateCourse(id) {
+  if (course.isPublished) return;
+  const course = await Course.findByIdAndUpdate(id, { // findByIdAndUpdate method it will send one command to mongodb to update a document and return it 
+    $set: {
+      author: 'Jared',
+      isPublished: true
+    }
+  }, {new: true}); // without this line of code you will not get the updated document 
+  console.log(course);
+}
+
+async function removeCourse(id) {
+  // if you want to delete more than one document then you can use deleteMany instead of deleteOne and it will tell you how many documant have been deleted 
+ const result = await Course.deleteOne({_id: id}) // this query object will help you find one specific document 
+ const course = await Course.findByIdAndRemove(id); //this give you the document that was deleted 
+ console.log(result); // or console.log(course); depending on which one that you want to use 
+}
+
+createCourse();
 getCourses();
+removeCourse();
+updateCourse(); // then you would input a valid course id and make it the argument for updateCourse() for that you can update the course in the database
+// after you run the program in the terminal by running node index.js you will see the result of the updated course in the database
