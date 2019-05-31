@@ -11,7 +11,8 @@ const helmet = require('helmet');
 const logger = require('./middleware/logger.js');
 const authentication = require('./middleware/auth.js');
 // const genres = require('./routes/genres.js');
-const genres = require('./routes/genres-mongodb');
+const genres = require('./routes/genres-mongodb.js');
+const customers = require('./routes/customers.js')
 const home = require('./routes/home.js');
 
 app.set('view engine', 'pug');
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded( {extended: true} ));
 app.use(helmet());
 app.use('/api/genres', genres); // this will tell the server to access the courses.js file for anything that has the /api/courses route 
+app.use('/api/customers', customers);
 app.use('/', home);
 
 app.use(logger);

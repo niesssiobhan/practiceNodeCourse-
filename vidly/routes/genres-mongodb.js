@@ -43,7 +43,7 @@ router.put('/:id', async (req, res) => {
     new: true // this is to get the updated object from the database
   });
   // if not exsiting then need to return 404
-  if(!genre) return res.status(404).send('The cousre with that ID was not found');  
+  if(!genre) return res.status(404).send('The genre with that ID was not found');  
 
   //return the updated genre 
   res.send(genre);
@@ -52,7 +52,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const genre = await Genre.findByIdAndRemove(req.params.id)
 
-  if(!genre) return res.status(404).send('The cousre with that ID was not found');
+  if(!genre) return res.status(404).send('The genre with that ID was not found');
 
   // return the same genre 
   res.send(genre);
