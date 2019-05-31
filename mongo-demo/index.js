@@ -42,11 +42,30 @@ async function createCourse() {
 // to view the documents that are in the database in the terminal just run node index.js
 // below is how you build queries
 async function getCourses() {
+  const pageNumber = 2;
+  const pageSize= 10;
+
   const courses = await Course
-    // .find({author: 'Siobhan', isPublished: true})
-    .find({price: {$gt: 10}}) // this means that you are looking for any documents that inclue a price of $10 or more
-    .limit(10)
+    .find({author: 'Siobhan', isPublished: true})
+    .find()
+    .or([ {author: 'Siobhan'}, {isPublished: true} ])
+    // looking t get an author that starts with Sio (going to use regular expression to do so)
+    // the ^ character means 'starts with' so in the example below it means that I am looking for any authors that start with 'Sio'
+    .find({author: /^Sio/ })
+    // in regualr expresssion the $ means the end of a string. so in this example I am looking for authors that end with Niess
+    // the 'i' at the end means that it now not case sensitive 
+    .find({author: /Niess$/i})
+    // in this example below means that you are searching for an auther that conatins 'iob' in the name
+    // in regular expression '.*' means 0 or more characters. so in this example it means that there can be 0 or more characters before or after 'iob' in the authors name 
+    .find({author: /.*iob.*/i})
+    // .find({price: {$gt: 10, $lte: 20} }) // this means that you are looking for any documents that inclue a price of $10 or up to $20
+    .find({price: {$in: [10, 15, 20]} })
+    // with the .skip anf the .limit below you are able to get any document within a given page
+    .skip((pageNumber - 1) * pageSize)
+    .limit(pageSize)
     .sort({name: 1})
+    // this means that it return the number of documents that match with .find({author: 'Siobhan', isPublished: true})
+    .count()
     .select({name: 1, tags: 1});
   console.log(courses);
 }
