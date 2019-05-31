@@ -9,11 +9,46 @@ mongoose.connect('mongodb://localhost/playground')
 // documents will have a key and value pair
 // this is setting up what you are going to be looking for and what the key and value pairs are going to be for the collection in the Schema  
 const courseSchema = new mongoose.Schema({
-  name: String,
+  // this is an example of codeing in validation
+  // you can also include match in with the validation where you use regular expression
+  name: { 
+    type: String, 
+    required: true,
+    minlength: 5,
+    maxlength: 255
+  }, 
+  category: { // this is a Schema type object
+    type: String,
+    required: true,
+    enum: ['web', 'mobile', 'network'],
+    lowercase: true, // you cant have both upper and lowercase set to true
+    // uppercase: true,
+    trim: true // mongoose will auto remove any padding that you have around strings 
+  },
   author: String,
-  tags: [String],
+  tags: {
+    type: Array,
+    validate: {
+      isAsync: true,
+      validator: function(v, callback) { // the v argument in the function stands for value. we are also making this function to be asynchornous 
+        setTimeout(()=> {
+          const result = v && v.length > 0; // this means that if v has a value and the length of the value is greater than 0
+          callback(result)
+        }, 1000);
+      },
+      message: 'a course should have at least one tag'
+    }
+  },
   date: {type: Date, default: Date.now},
-  isPublished: boolean
+  isPublished: boolean,
+  price: {
+    type: Number,
+    required: function() {return this.isPublished;}, // in the line of code you cant change the function to an arrow function because an arrow function doesnt have a 'this.'
+    min: 10,
+    max: 200,
+    get: v => Math.round(v), // this is reading the value as a rounded number 
+    set: v => Math.round(v) // this is setting the value to round the number 
+  }
 });
 
 // Course is a class, we know this because the first letter is uppercase
@@ -27,17 +62,26 @@ const courseSchema = new mongoose.Schema({
 // to see the object document in the termial you will want to run node index.js 
 const Course = mongoose.model('Course', courseSchema);
 
+// name, category, author... these are all the properties of course 
 async function createCourse() {
   const course = new Course ({
     name: 'Node.js Course',
-    author: "Siobhan",
-    tags: ['node', 'backend'],
+    category: 'web',
+    author: 'Teagan',
+    tags: ['frontend'],
     isPublished: true
   });
-  
-  // result is the unique id that the mongodb has given the course obejct/document 
+  // this try catch block is created to handle arejection form the Promise if there is one 
+  try {
+    // await course.validate // this is another way that you can write validation for this code instead of the const result and console.log after 
+    // result is the unique id that the mongodb has given the course obejct/document 
   const result = await course.save();
   console.log(result)
+  }
+  catch(ex) {
+    for (field in ex.errors) // this will iterate over all of the properties and will give more details about each validation error
+    console.log(ex.errors[field]) // this is going to find that property and getits value, this is a validation error object
+    }
 }
 
 // to view the documents that are in the database in the terminal just run node index.js
@@ -117,6 +161,7 @@ async function updateCourse(id) {
   console.log(course);
 }
 
+// this is an example of if you want to delete a document 
 async function removeCourse(id) {
   // if you want to delete more than one document then you can use deleteMany instead of deleteOne and it will tell you how many documant have been deleted 
  const result = await Course.deleteOne({_id: id}) // this query object will help you find one specific document 
