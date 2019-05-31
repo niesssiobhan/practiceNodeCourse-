@@ -7,11 +7,12 @@ mongoose.connect('mongodb://localhost/playground')
   .catch(err => console.error('could not connect to mongodb', err));
 
 // documents will have a key and value pair
+// this is setting up what you are going to be looking for and what the key and value pairs are going to be for the collection in the Schema  
 const courseSchema = new mongoose.Schema({
   name: String,
   author: String,
   tags: [String],
-  date: {type: Date, defualt: Date.now},
+  date: {type: Date, default: Date.now},
   isPublished: boolean
 });
 
@@ -58,7 +59,7 @@ async function getCourses() {
     // in this example below means that you are searching for an auther that conatins 'iob' in the name
     // in regular expression '.*' means 0 or more characters. so in this example it means that there can be 0 or more characters before or after 'iob' in the authors name 
     .find({author: /.*iob.*/i})
-    // .find({price: {$gt: 10, $lte: 20} }) // this means that you are looking for any documents that inclue a price of $10 or up to $20
+    .find({price: {$gt: 10, $lte: 20} }) // this means that you are looking for any documents that inclue a price of $10 or up to $20
     .find({price: {$in: [10, 15, 20]} })
     // with the .skip anf the .limit below you are able to get any document within a given page
     .skip((pageNumber - 1) * pageSize)
