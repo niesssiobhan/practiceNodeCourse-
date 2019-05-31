@@ -1,28 +1,9 @@
 'use strict';
 
+const {Customer, validate} = require('../models/customer.js'); // this fle has two properties (the module.export at the bottom of the /models/customer.js file) so we are using object destructuring so that we can use clean code and reference both properties 
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi');
-
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 50
-  },
-  isGold: {
-    type: Boolean,
-    default: false
-  },
-  phone: {
-    type: String,
-    required: true,
-    minlength: 5,
-    maxlength: 50
-  }
-}));
 
 router.get('/', async (req, res) => {
   const customers = await Customer.find().sort('name'); // this is going to find all of the customers and then sort them by name
@@ -37,7 +18,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const {error} = validateCustomer(req.body); 
+  const {error} = validate(req.body); 
   if(error) return res.status(400).send(error.details[0].message);
 
   let customer = new Customer ({
@@ -50,7 +31,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-  const {error} = validateCustomer(req.body); //this is like getting result.error
+  const {error} = validate(req.body); //this is like getting result.error
   if(error) return res.status(400).send(error.details[0].message); // validating 
 
   const customer = await Customer.findByIdAndUpdate(req.params.id, {
@@ -75,14 +56,5 @@ router.delete('/:id', async (req, res) => {
   // return the same customer 
   res.send(customer);
 });
-
-function validateCustomer(customer) {
-  const schema = {
-    name: Joi.string().min(5).max(50).required(),
-    phone: Joi.string().min(5).max(50).required(),
-    isGold: Joi.boolean()
-  };
-  return Joi.validate (customer, schema);
-}
 
 module.exports = router;
