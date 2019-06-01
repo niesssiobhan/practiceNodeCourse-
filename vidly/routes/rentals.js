@@ -4,8 +4,11 @@ const {Rental, validate} = require('../models/rental');
 const {Movie} = require('../models/movie'); 
 const {Customer} = require('../models/customers'); 
 const mongoose = require('mongoose');
+const Fawn = require('fawn');
 const express = require('express');
 const router = express.Router();
+
+Fawn.init(mongoose);
 
 // rememner that this is the end point to get the list of rentals
 router.get('/', async (req, res) => {
@@ -37,12 +40,22 @@ router.post('/', async (req, res) => {
       dailyRentalRate: movie.dailyRentalRate
     }
   });
-  rental = await rental.save();
 
-  movie.numberInStock--; // this show that there is one less of a particular movie in stock
-  movie.save();
+  try {
+    // new Fawn.Task uses a collection to make two face commits, so this collection will show up oin the database
+    new Fawn.Task() // all of the following operations will be treated as a unit (transaction)
+      .save('rentals', rental) // we are passing in the name of the collection and then the name of the new object
+      .update('movies', {_id: movie._id}, {
+        $inc: {numberInStock: -1}
+      })
+      .run(); // if you dont call run then none of the above operations will be performed (this represents the transaction)
+      // after .save has been done then .update will happen. after they have successfully been done then the collection from new Fawn.Task will be delted from the database
   
-  res.send(rental);
+    res.send(rental); // this is sent to the client
+  }
+  catch(ex) {
+    res.status(500).send('something failed') // the 500 error means that there was an internal server error
+  }
 });
 
 router.get('/:id', async (req, res) => {
