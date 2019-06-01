@@ -1,6 +1,6 @@
 'use strict';
 
-const {Customer, validate} = require('../models/customer.js'); // this file has two properties (the module.export at the bottom of the /models/customer.js file) so we are using object destructuring so that we can use clean code and reference both properties 
+const {Customer, validate} = require('../models/customers.js/index.js'); // this file has two properties (the module.export at the bottom of the /models/customer.js file) so we are using object destructuring so that we can use clean code and reference both properties 
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
