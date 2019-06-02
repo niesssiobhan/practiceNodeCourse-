@@ -1,3 +1,4 @@
 {
-  "name": "My Node Movie Project"
+  "name": "My Node Movie Project",
+  "jwtPrivateKey": ""
 }

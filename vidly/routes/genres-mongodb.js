@@ -1,5 +1,6 @@
 'use strict';
 
+const {Genre, validate}= require('../models/genres.js');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
