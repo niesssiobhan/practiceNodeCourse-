@@ -1,7 +1,9 @@
 'use strict';
 
 const debug = require('debug')('app:startup');
-
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi); // objectid is a method on the Joi object
+// this Joi.objectId is also going to help handle an unhanledPromosieRejection warning   that you could get in your terminal
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
@@ -29,7 +31,7 @@ app.use(helmet());
 app.use('/api/genres', genres); // this will tell the server to access the courses.js file for anything that has the /api/courses route 
 app.use('/api/customers', customers);
 app.use('/api/movies', movies);
-app.use('/api/rentals', rentals);
+app.use('/api/rentals', rentals); 
 app.use('/', home);
 
 app.use(logger);
