@@ -24,11 +24,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 5,
     maxlength: 1024 // this is longer because we are going to want to hash the password
-  }
+  },
+  isAdmin: Boolean
 });
 
 userSchema.methods.generateAuthToken = function() {
-  const token = jwt.sign({_id: this._id}, config.get('jwtPrivateKey')); // this line is how you generate a token
+  const token = jwt.sign({_id: this._id, isAdmin: this.isAdmin}, config.get('jwtPrivateKey')); // this line is how you generate a token
   return token;
 }
 

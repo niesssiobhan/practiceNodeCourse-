@@ -32,7 +32,8 @@ mongoose.connect('mongodb://localhost/vidly')
   .then(() => console.log('connected to mongodb'))
   .catch(err => console.error('could not connect to mongodb'));
 
-app.use(express.json());
+// here we are applying middleware functions
+app.use(express.json()); 
 app.use(express.urlencoded( {extended: true} ));
 app.use(helmet());
 app.use('/api/genres', genres); // this will tell the server to access the courses.js file for anything that has the /api/courses route 
