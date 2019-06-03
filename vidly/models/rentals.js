@@ -60,8 +60,9 @@ const Rental = mongoose.model('Rental', new mongoose.Schema({ // a new Schema is
 function validateRental(rental) {
   const schema = {
     // these are the properties that the client sends to the server
-    customerId: Joi.string().required(),
-    movieId: Joi.string().required()
+    // with having the Joi.objectId any rejections that may happen with the Promise will now be handeld properly
+    customerId: Joi.objectId().required(), 
+    movieId: Joi.objectId().required()
   };
 
   return Joi.validate(rental, schema);
