@@ -1,6 +1,5 @@
 'use strict';
 
-const asyncMiddleware = require('../middleware/async.js');
 const auth = require('../middleware/auth.js');
 const admin = require('../middleware/admin.js');
 const {Genre, validate}= require('../models/genres.js');
@@ -8,10 +7,11 @@ const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 
-router.get('/', asyncMiddleware(async (req, res) => {
+router.get('/', async (req, res) => {
+    // throw new Error('could not get the genres');
     const genres = await Genre.find().sort('name'); // this is going to find all of the genres and then sort them by name
     res.send(genres);
-}));
+});
 
 router.get('/:id', async (req, res) => {
   const genre = await Genre.findById(req.params.id);
@@ -22,7 +22,7 @@ router.get('/:id', async (req, res) => {
 
 // we are passing auth to be one of the arguments because it refers to the middleware function
 // async (req, res) is a route handler 
-router.post('/', auth, asynMiddleware(async (req, res) => { 
+router.post('/', auth, async (req, res) => { 
   const {error} = validate(req.body); 
   if(error) return res.status(400).send(error.details[0].message);
 
@@ -30,7 +30,7 @@ router.post('/', auth, asynMiddleware(async (req, res) => {
   genre = await genre.save(); // this is going to save it to the database
 
   res.send(genre); // this is returning the object in the body of the response 
-}));
+});
 
 router.put('/:id', async (req, res) => {
   const {error} = validate(req.body); //this is like getting result.error
