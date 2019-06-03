@@ -2,8 +2,9 @@
 
 const Joi = require('joi');
 const mongoose = require('mongoose');
+const moment = require('moment');
 
-const Rental = mongoose.model('Rental', new mongoose.Schema({ // a new Schema is being used instead of reusing the customer Schema because it could have many properties to it that and we probably wouldnt need all of them
+const rentalSchema = new mongoose.Schema({ // a new Schema is being used instead of reusing the customer Schema because it could have many properties to it that and we probably wouldnt need all of them
   customer: { 
     type: new mongoose.Schema({
       name: {
@@ -55,7 +56,23 @@ const Rental = mongoose.model('Rental', new mongoose.Schema({ // a new Schema is
     type: Number, 
     min: 0 // this is set to 0 so that it cant be a negative number
   }
-}));
+});
+
+rentalSchema.methods.return = function () {
+  this.dateReturned = new Date();
+
+  const rentalDays = moment().diff(this.dateOut, 'days');
+  this.rentalFee =  rentalDays * this.movie.dailyRentalRate
+}
+
+rentalSchema.statics.lookup = function (customerId, movieId) {
+  return this.findOne({
+    'cutomer._id': customerId,
+    'movie._id': movieId
+  })
+};
+
+const Rental = mongoose.model('Rental', rentalSchema);
 
 function validateRental(rental) {
   const schema = {

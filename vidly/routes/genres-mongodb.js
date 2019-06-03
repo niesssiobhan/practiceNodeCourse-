@@ -32,7 +32,7 @@ router.post('/', auth, async (req, res) => {
   res.send(genre); // this is returning the object in the body of the response 
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', [auth, validateObjectId], async (req, res) => {
   const {error} = validate(req.body); //this is like getting result.error
   if(error) return res.status(400).send(error.details[0].message); // validating 
 

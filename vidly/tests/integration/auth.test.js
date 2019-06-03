@@ -7,8 +7,8 @@ const request = require('supertest');
 describe('auth middleware', () => {
   beforeEach(() => {server = require('../../index.js');})
   afterEach(async () => { 
+    await server.close(); 
     await Genre.remove({});
-    server.close(); 
   });
 
   let token;
@@ -21,7 +21,7 @@ describe('auth middleware', () => {
   }
 
   beforeEach(() => {
-    token = new User().geberateAuthToken();
+    token = new User().generateAuthToken();
   })
 
   it('should return 401 if no token is provided', async () => {

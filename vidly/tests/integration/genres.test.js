@@ -7,12 +7,12 @@ const mongoose = require('mongoose');
 
 let server;
 
-describe('/api/genres', () => {
-  beforeEach(() => {server = require('../../index.js');})
-  afterEach(async () => {
-    server.close();
-    await Genre.remove({});
-  });
+describe('/api/genres', () => { beforeEach(() => {server = require('../../index.js');})
+afterEach(async () => { 
+  await server.close(); 
+  await Genre.remove({});
+});
+
 
   describe('GET /', () => {
     it('should return all genres', async () => {
@@ -45,6 +45,13 @@ describe('/api/genres', () => {
 
      expect(res.status).toBe(404);
     });
+
+    it('should return 404 if no genre with the given id exists', async () => {
+      const id = mongoose.Types.ObjectId();
+      const res = await request(server).get('/api/genres/1');
+ 
+      expect(res.status).toBe(404);
+     });
   });
 
   describe('POST /', () => {

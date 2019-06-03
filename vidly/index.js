@@ -16,6 +16,7 @@ require('./startup/routes.js')(app); // the app referes to the express app
 require('./startup/db.js')();
 require('./startup/config.js')();
 require('./startup/validation.js')();
+require('./startup/prod.js')(app);
 
 // app.set('view engine', 'pug');
 
