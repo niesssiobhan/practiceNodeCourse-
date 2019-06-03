@@ -4,15 +4,16 @@
   "description": "",
   "main": "db.js",
   "directories": {
-    "test": "test"
+    "test": "tests"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {},
   "devDependencies": {
     "jest": "^24.8.0"
   },
   "scripts": {
     "test": "jest --watchAll"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

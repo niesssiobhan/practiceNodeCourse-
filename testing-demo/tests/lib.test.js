@@ -10,12 +10,12 @@ describe('absolute', () => {
     const result = lib.absolute(1);
     expect(result).toBe(1); // toBe is a method
   });
-  
+
   it('should return a positive number if input is negative', () => {
     const result = lib.absolute(-1);
     expect(result).toBe(1);
   });
-  
+
   it('should return a zero number if input is zero', () => {
     const result = lib.absolute(0);
     expect(result).toBe(0);
@@ -90,4 +90,4 @@ describe('notifyCustomer', () => {
     expect(mail.send.mock.calls[0][0]).toBe('a'); // this is checking for the email
     expect(mail.send.mock.calls[0][1]).toMatch(/order/); // this is checking for the message that is passed along with the email
   });
-});
+}); 

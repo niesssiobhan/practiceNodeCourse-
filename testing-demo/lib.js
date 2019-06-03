@@ -4,13 +4,12 @@ const db = require('./db');
 const mail = require('./mail');
 
 // Testing numbers 
-// with absolue you will always get a positive number or 0
 module.exports.absolute = function(number) {
   return (number >= 0 ) ? number : -number; // if number is greater than or equal to 0 we will return number otherwise we will return negative number
   // the 3 lines of code all do the same as the line of code above
   // if (number > 0) return number; 
   // if (number < 0) return -number; 
-  // return 0; 
+  // return 0;  
 }
 
 // Testing strings 
