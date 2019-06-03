@@ -21,7 +21,7 @@ describe('auth middleware', () => {
   }
 
   beforeEach(() => {
-    token = new User().geberateAuthToken();
+    token = new User().generateAuthToken();
   })
 
   it('should return 401 if no token is provided', async () => {
