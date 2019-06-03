@@ -1,4 +1,5 @@
 {
   "name": "My Node Movie Project",
-  "jwtPrivateKey": ""
+  "jwtPrivateKey": "",
+  "db": "mongodb://localhost/vidly"
 }

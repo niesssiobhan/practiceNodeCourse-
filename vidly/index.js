@@ -11,7 +11,7 @@ const app = express();
 // const auth = require('./routes/auth.js');
 // const home = require('./routes/home.js');
 
-require('./startup/loggin.js')();  
+require('./startup/logging.js')();  
 require('./startup/routes.js')(app); // the app referes to the express app
 require('./startup/db.js')();
 require('./startup/config.js')();
@@ -25,4 +25,6 @@ require('./startup/validation.js')();
 // };
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => winston.info(`Listening on ${port}`));
+const server = app.listen(port, () => winston.info(`Listening on ${port}`));
+
+module.exports = server;
