@@ -16,8 +16,9 @@ module.exports = function () {
 
 // this is another way to write the code from above
 winston.handleException(
-  new winston.transports.Console({colorize: true, prettyPrint: true});
-  new winston.transports.File({filename: 'uncaughtExceptions.log'}));
+  new winston.transports.Console({colorize: true, prettyPrint: true}),
+  new winston.transports.File({filename: 'uncaughtExceptions.log'})
+)
 
 process.on('unhandledRejection', (ex) => {
   // console.log('WE GOT AN UNHANDLED REJECTION');
